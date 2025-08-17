@@ -180,6 +180,16 @@ if (process.env.NODE_ENV === "production") {
 			}
 		);
 	});
+
+	it("CVE-2023-28154 webpackExports should sanitize returned objects to not allow overriding every()", function () {
+		return import(/* webpackExports: ((() => {
+			    const a = ["a"];
+			    a.every = 5;
+			    return a;
+    	})()) */ "./dir1/a").then(module => {
+		expect(module.default).toEqual("a");
+	})
+	});
 }
 
 function testChunkLoading(load, expectedSyncInitial, expectedSyncRequested) {
